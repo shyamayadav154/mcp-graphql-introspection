@@ -32,6 +32,32 @@ A Node.js server implementing the Model Context Protocol (MCP) that provides Gra
 
 ## Usage
 
+### Claude code
+```bash
+claude mcp add graphql-introspection npx mcp-graphql-introspection
+```
+
+
+
+### Cursor
+#### Click the button to install:
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=graphql-introspection&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMm5weCUyMG1jcC1ncmFwaHFsLWludHJvc3BlY3Rpb24lMjIlN0Q%3D)
+#### Or install manually:
+Go to Cursor Settings -> MCP -> Add new MCP Server. Name to your liking, use command type with the command npx @playwright/mcp. You can also verify config or add command like arguments via clicking Edit.
+
+```json
+{
+  "mcpServers": {
+    "graphql-introspection": {
+      "command": "npx",
+      "args": ["mcp-graphql-introspection"]
+    }
+  }
+}
+```
+
+
+
 ### Claude Desktop
 
 Add this to your `claude_desktop_config.json`:
@@ -49,13 +75,12 @@ Add this to your `claude_desktop_config.json`:
 
 ### VS Code
 
-#### NPX Installation
 
 Add this to your VS Code settings:
 
 ```json
 {
-  "mcp.servers": {
+  "mcpServers": {
     "graphql-introspection": {
       "command": "npx",
       "args": ["mcp-graphql-introspection"]

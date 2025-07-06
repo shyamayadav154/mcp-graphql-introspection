@@ -226,58 +226,57 @@ const server = new McpServer({
     version: '1.0.0',
 })
 
-// Register GraphQL introspection tools
-// server.tool(
-//     'introspect-schema',
-//     'Get full GraphQL schema information from endpoint',
-//     {
-//         endpoint: z
-//             .string()
-//             .url()
-//             .optional()
-//             .describe(
-//                 'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
-//             ),
-//     },
-//     async ({ endpoint }) => {
-//         const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
-//         const { data: introspectionData, error } =
-//             await makeGraphQLRequest<IntrospectionResponse>(
-//                 graphqlEndpoint,
-//                 INTROSPECTION_QUERY,
-//             )
-//
-//         if (error || !introspectionData) {
-//             return {
-//                 content: [
-//                     {
-//                         type: 'text',
-//                         text: error || 'Failed to retrieve schema information',
-//                     },
-//                 ],
-//             }
-//         }
-//
-//         const schema = introspectionData.__schema
-//         const schemaInfo = [
-//             `GraphQL Schema for ${graphqlEndpoint}`,
-//             `Query Type: ${schema.queryType?.name || 'None'}`,
-//             `Mutation Type: ${schema.mutationType?.name || 'None'}`,
-//             `Subscription Type: ${schema.subscriptionType?.name || 'None'}`,
-//             `Total Types: ${schema.types.length}`,
-//             `Directives: ${schema.directives.length}`,
-//         ]
-//
-//         return {
-//             content: [
-//                 {
-//                     type: 'text',
-//                     text: schemaInfo.join('\n'),
-//                 },
-//             ],
-//         }
-//     },
-// )
+server.tool(
+    'introspect-schema',
+    'Get full GraphQL schema information from endpoint',
+    {
+        endpoint: z
+            .string()
+            .url()
+            .optional()
+            .describe(
+                'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
+            ),
+    },
+    async ({ endpoint }) => {
+        const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
+        const { data: introspectionData, error } =
+            await makeGraphQLRequest<IntrospectionResponse>(
+                graphqlEndpoint,
+                INTROSPECTION_QUERY,
+            )
+
+        if (error || !introspectionData) {
+            return {
+                content: [
+                    {
+                        type: 'text',
+                        text: error || 'Failed to retrieve schema information',
+                    },
+                ],
+            }
+        }
+
+        const schema = introspectionData.__schema
+        const schemaInfo = [
+            `GraphQL Schema for ${graphqlEndpoint}`,
+            `Query Type: ${schema.queryType?.name || 'None'}`,
+            `Mutation Type: ${schema.mutationType?.name || 'None'}`,
+            `Subscription Type: ${schema.subscriptionType?.name || 'None'}`,
+            `Total Types: ${schema.types.length}`,
+            `Directives: ${schema.directives.length}`,
+        ]
+
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: schemaInfo.join('\n'),
+                },
+            ],
+        }
+    },
+)
 
 server.tool(
     'get-queries',
