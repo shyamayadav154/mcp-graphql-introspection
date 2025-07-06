@@ -1,0 +1,28 @@
+{
+  "type": "module",
+  "bin": {
+    "graphql-introspection": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "graphql-request": "^7.2.0",
+    "zod": "^3.25.74"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "trailingComma": "all",
+    "printWidth": 80,
+    "tabWidth": 4
+  }
+}
