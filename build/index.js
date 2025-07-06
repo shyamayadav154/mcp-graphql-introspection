@@ -167,58 +167,43 @@ const server = new McpServer({
     name: 'graphql-introspection',
     version: '1.0.0',
 });
-// Register GraphQL introspection tools
-// server.tool(
-//     'introspect-schema',
-//     'Get full GraphQL schema information from endpoint',
-//     {
-//         endpoint: z
-//             .string()
-//             .url()
-//             .optional()
-//             .describe(
-//                 'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
-//             ),
-//     },
-//     async ({ endpoint }) => {
-//         const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
-//         const { data: introspectionData, error } =
-//             await makeGraphQLRequest<IntrospectionResponse>(
-//                 graphqlEndpoint,
-//                 INTROSPECTION_QUERY,
-//             )
-//
-//         if (error || !introspectionData) {
-//             return {
-//                 content: [
-//                     {
-//                         type: 'text',
-//                         text: error || 'Failed to retrieve schema information',
-//                     },
-//                 ],
-//             }
-//         }
-//
-//         const schema = introspectionData.__schema
-//         const schemaInfo = [
-//             `GraphQL Schema for ${graphqlEndpoint}`,
-//             `Query Type: ${schema.queryType?.name || 'None'}`,
-//             `Mutation Type: ${schema.mutationType?.name || 'None'}`,
-//             `Subscription Type: ${schema.subscriptionType?.name || 'None'}`,
-//             `Total Types: ${schema.types.length}`,
-//             `Directives: ${schema.directives.length}`,
-//         ]
-//
-//         return {
-//             content: [
-//                 {
-//                     type: 'text',
-//                     text: schemaInfo.join('\n'),
-//                 },
-//             ],
-//         }
-//     },
-// )
+server.tool('introspect-schema', 'Get full GraphQL schema information from endpoint', {
+    endpoint: z
+        .string()
+        .url()
+        .optional()
+        .describe('GraphQL endpoint URL (defaults to localhost:4001/api/graphql)'),
+}, async ({ endpoint }) => {
+    const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT;
+    const { data: introspectionData, error } = await makeGraphQLRequest(graphqlEndpoint, INTROSPECTION_QUERY);
+    if (error || !introspectionData) {
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: error || 'Failed to retrieve schema information',
+                },
+            ],
+        };
+    }
+    const schema = introspectionData.__schema;
+    const schemaInfo = [
+        `GraphQL Schema for ${graphqlEndpoint}`,
+        `Query Type: ${schema.queryType?.name || 'None'}`,
+        `Mutation Type: ${schema.mutationType?.name || 'None'}`,
+        `Subscription Type: ${schema.subscriptionType?.name || 'None'}`,
+        `Total Types: ${schema.types.length}`,
+        `Directives: ${schema.directives.length}`,
+    ];
+    return {
+        content: [
+            {
+                type: 'text',
+                text: schemaInfo.join('\n'),
+            },
+        ],
+    };
+});
 server.tool('get-queries', 'List all available queries with descriptions and parameters', {
     endpoint: z
         .string()
@@ -303,14 +288,14 @@ server.tool('get-mutations', 'List all available mutations with descriptions and
         ],
     };
 });
-server.tool('get-type-details', 'Get detailed information about a specific GraphQL type', {
+server.tool('get-type-details', 'Get detailed information about specific GraphQL types', {
     endpoint: z
         .string()
         .url()
         .optional()
         .describe('GraphQL endpoint URL (defaults to localhost:4001/api/graphql)'),
-    typeName: z.string().describe('Name of the GraphQL type to inspect'),
-}, async ({ endpoint, typeName }) => {
+    typeNames: z.array(z.string()).describe('Names of the GraphQL types to inspect'),
+}, async ({ endpoint, typeNames }) => {
     const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT;
     const { data: introspectionData, error } = await makeGraphQLRequest(graphqlEndpoint, INTROSPECTION_QUERY);
     if (error || !introspectionData) {
@@ -324,45 +309,52 @@ server.tool('get-type-details', 'Get detailed information about a specific Graph
         };
     }
     const schema = introspectionData.__schema;
-    const type = schema.types.find((t) => t.name === typeName);
-    if (!type) {
-        return {
-            content: [
-                {
-                    type: 'text',
-                    text: `Type "${typeName}" not found in schema`,
-                },
-            ],
-        };
+    const foundTypes = [];
+    const notFoundTypes = [];
+    for (const typeName of typeNames) {
+        const type = schema.types.find((t) => t.name === typeName);
+        if (type) {
+            foundTypes.push(type);
+        }
+        else {
+            notFoundTypes.push(typeName);
+        }
     }
-    const typeDetails = [
-        `Type: ${type.name}`,
-        `Kind: ${type.kind}`,
-        type.description ? `Description: ${type.description}` : '',
-    ].filter(Boolean);
-    if (type.fields) {
-        typeDetails.push(`\nFields:`);
-        type.fields.forEach((field) => {
-            typeDetails.push(`  ${formatField(field)}`);
-        });
+    const result = [];
+    if (notFoundTypes.length > 0) {
+        result.push(`Types not found: ${notFoundTypes.join(', ')}`);
     }
-    if (type.enumValues) {
-        typeDetails.push(`\nEnum Values:`);
-        type.enumValues.forEach((value) => {
-            typeDetails.push(`  ${value.name}${value.description ? ` - ${value.description}` : ''}`);
-        });
-    }
-    if (type.inputFields) {
-        typeDetails.push(`\nInput Fields:`);
-        type.inputFields.forEach((field) => {
-            typeDetails.push(`  ${field.name}: ${formatType(field.type)}${field.description ? ` - ${field.description}` : ''}`);
-        });
+    for (const type of foundTypes) {
+        const typeDetails = [
+            `Type: ${type.name}`,
+            `Kind: ${type.kind}`,
+            type.description ? `Description: ${type.description}` : '',
+        ].filter(Boolean);
+        if (type.fields) {
+            typeDetails.push(`\nFields:`);
+            type.fields.forEach((field) => {
+                typeDetails.push(`  ${formatField(field)}`);
+            });
+        }
+        if (type.enumValues) {
+            typeDetails.push(`\nEnum Values:`);
+            type.enumValues.forEach((value) => {
+                typeDetails.push(`  ${value.name}${value.description ? ` - ${value.description}` : ''}`);
+            });
+        }
+        if (type.inputFields) {
+            typeDetails.push(`\nInput Fields:`);
+            type.inputFields.forEach((field) => {
+                typeDetails.push(`  ${field.name}: ${formatType(field.type)}${field.description ? ` - ${field.description}` : ''}`);
+            });
+        }
+        result.push(typeDetails.join('\n'));
     }
     return {
         content: [
             {
                 type: 'text',
-                text: typeDetails.join('\n'),
+                text: result.join('\n\n---\n\n'),
             },
         ],
     };

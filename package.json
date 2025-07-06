@@ -1,6 +1,6 @@
 {
   "name": "mcp-graphql-introspection",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Model Context Protocol server that provides GraphQL schema introspection capabilities",
   "type": "module",
   "bin": {
