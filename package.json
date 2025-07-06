@@ -1,4 +1,7 @@
 {
+  "name": "mcp-graphql-introspection",
+  "version": "1.0.1",
+  "description": "A Model Context Protocol server that provides GraphQL schema introspection capabilities",
   "type": "module",
   "bin": {
     "graphql-introspection": "./build/index.js"
@@ -7,8 +10,22 @@
     "build": "tsc && chmod 755 build/index.js"
   },
   "files": [
-    "build"
+    "build",
+    "README.md"
   ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "graphql",
+    "introspection",
+    "claude"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/mcp-graphql-introspection.git"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
     "graphql-request": "^7.2.0",
