@@ -227,7 +227,7 @@ const server = new McpServer({
 })
 
 server.tool(
-    'introspect-schema',
+    'introspect_schema',
     'Get full GraphQL schema information from endpoint',
     {
         endpoint: z
@@ -279,7 +279,7 @@ server.tool(
 )
 
 server.tool(
-    'get-queries',
+    'get_graphql_gql_queries',
     'List all available graphql/gql queries with description and parameters',
     {
         endpoint: z
@@ -340,7 +340,7 @@ server.tool(
 )
 
 server.tool(
-    'get-mutations',
+    'get_graphql_gql_mutations',
     'List all available graphql/gql mutations description and parameters',
     {
         endpoint: z
@@ -401,7 +401,7 @@ server.tool(
 )
 
 server.tool(
-    'get-type-details',
+    'get_graphql_type_details',
     'Get detailed information about specific GraphQL/gql types',
     {
         endpoint: z
