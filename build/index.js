@@ -204,7 +204,7 @@ server.tool('introspect-schema', 'Get full GraphQL schema information from endpo
         ],
     };
 });
-server.tool('get-queries', 'List all available graphql/gql queries with parameters', {
+server.tool('get-queries', 'List all available graphql/gql queries with description and parameters', {
     endpoint: z
         .string()
         .url()
@@ -246,7 +246,7 @@ server.tool('get-queries', 'List all available graphql/gql queries with paramete
         ],
     };
 });
-server.tool('get-mutations', 'List all available graphql/gql mutations parameters', {
+server.tool('get-mutations', 'List all available graphql/gql mutations description and parameters', {
     endpoint: z
         .string()
         .url()
