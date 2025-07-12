@@ -14,20 +14,25 @@ A Node.js server implementing the Model Context Protocol (MCP) that provides Gra
 
 ### Tools
 
-- **get-queries**
+- **introspect_schema**
+  - Get full GraphQL schema information from endpoint
+  - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
+  - Returns basic schema information including query/mutation/subscription types and counts
+
+- **get_graphql_gql_queries**
   - List all available queries with descriptions and parameters
   - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
   - Returns formatted list of queries with their arguments and return types
 
-- **get-mutations**
+- **get_graphql_gql_mutations**
   - List all available mutations with descriptions and parameters
   - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
   - Returns formatted list of mutations with their arguments and return types
 
-- **get-type-details**
-  - Get detailed information about a specific GraphQL type
+- **get_graphql_type_details**
+  - Get detailed information about specific GraphQL types
   - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
-  - Input: `typeName` (string): Name of the GraphQL type to inspect
+  - Input: `typeNames` (array of strings): Names of the GraphQL types to inspect
   - Returns detailed type information including fields, enum values, and input fields
 
 ## Usage
