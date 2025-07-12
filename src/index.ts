@@ -280,7 +280,7 @@ server.tool(
 
 server.tool(
     'get-queries',
-    'List all available queries with descriptions and parameters',
+    'List all available graphql/gql queries with parameters',
     {
         endpoint: z
             .string()
@@ -341,7 +341,7 @@ server.tool(
 
 server.tool(
     'get-mutations',
-    'List all available mutations with descriptions and parameters',
+    'List all available graphql/gql mutations parameters',
     {
         endpoint: z
             .string()
@@ -402,7 +402,7 @@ server.tool(
 
 server.tool(
     'get-type-details',
-    'Get detailed information about specific GraphQL types',
+    'Get detailed information about specific GraphQL/gql types',
     {
         endpoint: z
             .string()
