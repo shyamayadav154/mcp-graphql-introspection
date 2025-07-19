@@ -37,12 +37,30 @@ A Node.js server implementing the Model Context Protocol (MCP) that provides Gra
 
 ## Usage
 
-### Claude code
+The server supports command line arguments to specify a custom GraphQL endpoint:
+
 ```bash
-claude mcp add graphql-introspection npx mcp-graphql-introspection
+# Default endpoint (http://localhost:4001/api/graphql)
+npx mcp-graphql-introspection
+
+# Using --endpoint flag
+npx mcp-graphql-introspection --endpoint https://api.example.com/graphql
+
+# Using -e shorthand
+npx mcp-graphql-introspection -e https://api.example.com/graphql
+
+# Direct URL as first argument  
+npx mcp-graphql-introspection https://api.example.com/graphql
 ```
 
+### Claude code
+```bash
+# Default endpoint
+claude mcp add graphql-introspection npx mcp-graphql-introspection
 
+# Custom endpoint
+claude mcp add graphql-introspection npx mcp-graphql-introspection https://api.example.com/graphql
+```
 
 ### Cursor
 #### Click the button to install:
@@ -61,7 +79,17 @@ Go to Cursor Settings -> MCP -> Add new MCP Server. Name to your liking, use com
 }
 ```
 
-
+#### With custom endpoint:
+```json
+{
+  "mcpServers": {
+    "graphql-introspection": {
+      "command": "npx",
+      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
+    }
+  }
+}
+```
 
 ### Claude Desktop
 
@@ -78,8 +106,19 @@ Add this to your `claude_desktop_config.json`:
 }
 ```
 
-### VS Code
+#### With custom endpoint:
+```json
+{
+  "mcpServers": {
+    "graphql-introspection": {
+      "command": "npx",
+      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
+    }
+  }
+}
+```
 
+### VS Code
 
 Add this to your VS Code settings:
 
@@ -89,6 +128,18 @@ Add this to your VS Code settings:
     "graphql-introspection": {
       "command": "npx",
       "args": ["mcp-graphql-introspection"]
+    }
+  }
+}
+```
+
+#### With custom endpoint:
+```json
+{
+  "mcpServers": {
+    "graphql-introspection": {
+      "command": "npx",
+      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
     }
   }
 }

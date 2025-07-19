@@ -5,9 +5,28 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod'
 import { GraphQLClient } from 'graphql-request'
 
-// Default GraphQL endpoint
-const DEFAULT_ENDPOINT = 'http://localhost:4001/api/graphql'
+// Parse command line arguments
+function parseArgs(): string {
+    const args = process.argv.slice(2)
 
+    // Support --endpoint flag
+    const endpointIndex = args.findIndex(
+        (arg) => arg === '--endpoint' || arg === '-e',
+    )
+    if (endpointIndex !== -1 && args[endpointIndex + 1]) {
+        return args[endpointIndex + 1]
+    }
+
+    // Support direct URL as first argument
+    if (args.length > 0 && args[0].startsWith('http')) {
+        return args[0]
+    }
+
+    return 'http://localhost:4001/api/graphql'
+}
+
+// Default GraphQL endpoint (can be overridden by CLI args)
+const DEFAULT_ENDPOINT = parseArgs()
 
 // GraphQL introspection query
 const INTROSPECTION_QUERY = `
@@ -411,7 +430,9 @@ server.tool(
             .describe(
                 'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
             ),
-        typeNames: z.array(z.string()).describe('Names of the GraphQL types to inspect'),
+        typeNames: z
+            .array(z.string())
+            .describe('Names of the GraphQL types to inspect'),
     },
     async ({ endpoint, typeNames }) => {
         const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
