@@ -8,41 +8,37 @@ A Node.js server implementing the Model Context Protocol (MCP) that provides Gra
 - **Query Discovery**: List all available queries with descriptions and parameters
 - **Mutation Discovery**: List all available mutations with descriptions and parameters
 - **Type Details**: Get detailed information about specific GraphQL types including fields, enum values, and input fields
-- **Flexible Endpoint Support**: Connect to any GraphQL endpoint (defaults to localhost:4001/api/graphql)
+- **Endpoint Required**: Must specify a GraphQL endpoint when starting the server
 
 ## API
 
 ### Tools
 
 - **introspect_schema**
-  - Get full GraphQL schema information from endpoint
-  - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
+  - Get full GraphQL schema information from the configured endpoint
+  - No input parameters required
   - Returns basic schema information including query/mutation/subscription types and counts
 
 - **get_graphql_gql_queries**
   - List all available queries with descriptions and parameters
-  - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
+  - No input parameters required
   - Returns formatted list of queries with their arguments and return types
 
 - **get_graphql_gql_mutations**
   - List all available mutations with descriptions and parameters
-  - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
+  - No input parameters required
   - Returns formatted list of mutations with their arguments and return types
 
 - **get_graphql_type_details**
   - Get detailed information about specific GraphQL types
-  - Input: `endpoint` (string, optional): GraphQL endpoint URL (defaults to localhost:4001/api/graphql)
   - Input: `typeNames` (array of strings): Names of the GraphQL types to inspect
   - Returns detailed type information including fields, enum values, and input fields
 
 ## Usage
 
-The server supports command line arguments to specify a custom GraphQL endpoint:
+**Important**: A GraphQL endpoint is required when starting the server. The server will not start without one.
 
 ```bash
-# Default endpoint (http://localhost:4001/api/graphql)
-npx mcp-graphql-introspection
-
 # Using --endpoint flag
 npx mcp-graphql-introspection --endpoint https://api.example.com/graphql
 
@@ -51,41 +47,45 @@ npx mcp-graphql-introspection -e https://api.example.com/graphql
 
 # Direct URL as first argument  
 npx mcp-graphql-introspection https://api.example.com/graphql
+
+# Error - no endpoint provided
+npx mcp-graphql-introspection
+# Error: GraphQL endpoint is required. Please provide an endpoint using --endpoint flag or as a direct URL argument.
 ```
 
 ### Claude code
 ```bash
-# Default endpoint
-claude mcp add graphql-introspection npx mcp-graphql-introspection
-
-# Custom endpoint
+# Must provide an endpoint
 claude mcp add graphql-introspection npx mcp-graphql-introspection https://api.example.com/graphql
+
+# Or with --endpoint flag
+claude mcp add graphql-introspection npx mcp-graphql-introspection --endpoint https://api.example.com/graphql
 ```
 
 ### Cursor
 #### Click the button to install:
 [![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=graphql-introspection&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMm5weCUyMG1jcC1ncmFwaHFsLWludHJvc3BlY3Rpb24lMjIlN0Q%3D)
 #### Or install manually:
-Go to Cursor Settings -> MCP -> Add new MCP Server. Name to your liking, use command type with the command npx @playwright/mcp. You can also verify config or add command like arguments via clicking Edit.
+Go to Cursor Settings -> MCP -> Add new MCP Server. Name to your liking, use command type with the command npx mcp-graphql-introspection. You can also verify config or add command like arguments via clicking Edit.
 
-```json
-{
-  "mcpServers": {
-    "graphql-introspection": {
-      "command": "npx",
-      "args": ["mcp-graphql-introspection"]
-    }
-  }
-}
-```
-
-#### With custom endpoint:
 ```json
 {
   "mcpServers": {
     "graphql-introspection": {
       "command": "npx",
       "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
+    }
+  }
+}
+```
+
+#### Alternative with direct URL:
+```json
+{
+  "mcpServers": {
+    "graphql-introspection": {
+      "command": "npx",
+      "args": ["mcp-graphql-introspection", "https://api.example.com/graphql"]
     }
   }
 }
@@ -100,19 +100,19 @@ Add this to your `claude_desktop_config.json`:
   "mcpServers": {
     "graphql-introspection": {
       "command": "npx",
-      "args": ["mcp-graphql-introspection"]
+      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
     }
   }
 }
 ```
 
-#### With custom endpoint:
+#### Alternative with direct URL:
 ```json
 {
   "mcpServers": {
     "graphql-introspection": {
       "command": "npx",
-      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
+      "args": ["mcp-graphql-introspection", "https://api.example.com/graphql"]
     }
   }
 }
@@ -127,19 +127,19 @@ Add this to your VS Code settings:
   "mcpServers": {
     "graphql-introspection": {
       "command": "npx",
-      "args": ["mcp-graphql-introspection"]
+      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
     }
   }
 }
 ```
 
-#### With custom endpoint:
+#### Alternative with direct URL:
 ```json
 {
   "mcpServers": {
     "graphql-introspection": {
       "command": "npx",
-      "args": ["mcp-graphql-introspection", "--endpoint", "https://api.example.com/graphql"]
+      "args": ["mcp-graphql-introspection", "https://api.example.com/graphql"]
     }
   }
 }

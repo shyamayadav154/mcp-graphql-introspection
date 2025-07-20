@@ -9,6 +9,12 @@ import { GraphQLClient } from 'graphql-request'
 function parseArgs(): string {
     const args = process.argv.slice(2)
 
+    if (args.length === 0) {
+        console.error(
+            'Error: GraphQL endpoint is required. Please provide an endpoint using --endpoint flag or as a direct URL argument.',
+        )
+    }
+
     // Support --endpoint flag
     const endpointIndex = args.findIndex(
         (arg) => arg === '--endpoint' || arg === '-e',
@@ -22,11 +28,13 @@ function parseArgs(): string {
         return args[0]
     }
 
-    return 'http://localhost:4001/api/graphql'
+    throw new Error(
+        'Error: No valid GraphQL endpoint provided. Please use --endpoint flag or provide a URL as the first argument.',
+    )
 }
 
 // Default GraphQL endpoint (can be overridden by CLI args)
-const DEFAULT_ENDPOINT = parseArgs()
+const graphqlApi = parseArgs()
 
 // GraphQL introspection query
 const INTROSPECTION_QUERY = `
@@ -248,20 +256,11 @@ const server = new McpServer({
 server.tool(
     'introspect_schema',
     'Get full GraphQL schema information from endpoint',
-    {
-        endpoint: z
-            .string()
-            .url()
-            .optional()
-            .describe(
-                'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
-            ),
-    },
-    async ({ endpoint }) => {
-        const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
+    {},
+    async () => {
         const { data: introspectionData, error } =
             await makeGraphQLRequest<IntrospectionResponse>(
-                graphqlEndpoint,
+                graphqlApi,
                 INTROSPECTION_QUERY,
             )
 
@@ -278,7 +277,7 @@ server.tool(
 
         const schema = introspectionData.__schema
         const schemaInfo = [
-            `GraphQL Schema for ${graphqlEndpoint}`,
+            `GraphQL Schema for ${graphqlApi}`,
             `Query Type: ${schema.queryType?.name || 'None'}`,
             `Mutation Type: ${schema.mutationType?.name || 'None'}`,
             `Subscription Type: ${schema.subscriptionType?.name || 'None'}`,
@@ -300,20 +299,11 @@ server.tool(
 server.tool(
     'get_graphql_gql_queries',
     'List all available graphql/gql queries with description and parameters',
-    {
-        endpoint: z
-            .string()
-            .url()
-            .optional()
-            .describe(
-                'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
-            ),
-    },
-    async ({ endpoint }) => {
-        const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
+    {},
+    async () => {
         const { data: introspectionData, error } =
             await makeGraphQLRequest<IntrospectionResponse>(
-                graphqlEndpoint,
+                graphqlApi,
                 INTROSPECTION_QUERY,
             )
 
@@ -361,20 +351,11 @@ server.tool(
 server.tool(
     'get_graphql_gql_mutations',
     'List all available graphql/gql mutations description and parameters',
-    {
-        endpoint: z
-            .string()
-            .url()
-            .optional()
-            .describe(
-                'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
-            ),
-    },
-    async ({ endpoint }) => {
-        const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
+    {},
+    async () => {
         const { data: introspectionData, error } =
             await makeGraphQLRequest<IntrospectionResponse>(
-                graphqlEndpoint,
+                graphqlApi,
                 INTROSPECTION_QUERY,
             )
 
@@ -423,22 +404,14 @@ server.tool(
     'get_graphql_type_details',
     'Get detailed information about specific GraphQL/gql types',
     {
-        endpoint: z
-            .string()
-            .url()
-            .optional()
-            .describe(
-                'GraphQL endpoint URL (defaults to localhost:4001/api/graphql)',
-            ),
         typeNames: z
             .array(z.string())
             .describe('Names of the GraphQL types to inspect'),
     },
-    async ({ endpoint, typeNames }) => {
-        const graphqlEndpoint = endpoint || DEFAULT_ENDPOINT
+    async ({ typeNames }) => {
         const { data: introspectionData, error } =
             await makeGraphQLRequest<IntrospectionResponse>(
-                graphqlEndpoint,
+                graphqlApi,
                 INTROSPECTION_QUERY,
             )
 
